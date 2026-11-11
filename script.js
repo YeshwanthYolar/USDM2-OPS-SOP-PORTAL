@@ -128,6 +128,7 @@ function renderDetail(sop){
     <div class="detail-kicker">${escapeHTML(category?.name||"SOP")} · <span>${escapeHTML(sop.status||"Review status not specified")}</span></div>
     <h1 class="detail-title">${escapeHTML(sop.title)}</h1>
     <p class="detail-summary">${escapeHTML(sop.summary||"")}</p>
+    <p class="source-document"><a class="source-document-link" href="${"sops/"+encodeURIComponent(sop.file)}" target="_blank" rel="noopener">Open original SOP document ↗</a></p>
     <div class="metadata-strip"><span><small>OWNER</small><strong>${escapeHTML(sop.owner||"Not assigned")}</strong></span><span><small>VERSION</small><strong>${escapeHTML(sop.version||"—")}</strong></span><span><small>LAST UPDATED</small><strong>${escapeHTML(sop.updated||"—")}</strong></span></div>
     <section class="detail-section"><h2>1. Purpose</h2><p>${escapeHTML(sop.purpose||"Not documented yet.")}</p></section>
     <section class="detail-section"><h2>2. Prerequisites</h2>${renderList(sop.prerequisites,"No prerequisites listed.")}</section>
