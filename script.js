@@ -222,6 +222,19 @@ function renderList(items, emptyText){
   return `<ul class="detail-list">${items.map(item=>`<li>${escapeHTML(item)}</li>`).join("")}</ul>`;
 }
 
+async function loadSourceDocument(sop){
+  const target=document.getElementById("documentContent");
+  if(!target)return;
+  if(!window.mammoth){target.textContent="Document viewer unavailable. Use the original Word document link above.";return;}
+  try{
+    const response=await fetch("sops/"+encodeURIComponent(sop.file));
+    if(!response.ok)throw new Error("Document request failed");
+    const buffer=await response.arrayBuffer();
+    const result=await mammoth.convertToHtml({arrayBuffer:buffer});
+    target.innerHTML=result.value||"No extractable text found in this document.";
+  }catch(error){target.textContent="Could not display this document. Use the original Word document link above."}
+}
+
 function renderDetail(sop){
   const category = categories.find(item=>item.id===sop.category);
   const steps = (sop.steps||[]).map((step,index)=>`
@@ -243,15 +256,12 @@ function renderDetail(sop){
     <p class="detail-summary">${escapeHTML(sop.summary||"")}</p>
     <p class="source-document"><a class="source-document-link" href="${"sops/"+encodeURIComponent(sop.file)}" target="_blank" rel="noopener">Open original SOP document ↗</a></p>
     <div class="metadata-strip"><span><small>OWNER</small><strong>${escapeHTML(sop.owner||"Not assigned")}</strong></span><span><small>VERSION</small><strong>${escapeHTML(sop.version||"—")}</strong></span><span><small>LAST UPDATED</small><strong>${escapeHTML(sop.updated||"—")}</strong></span></div>
-    <section class="detail-section"><h2>1. Purpose</h2><p>${escapeHTML(sop.purpose||"Not documented yet.")}</p></section>
-    <section class="detail-section"><h2>2. Prerequisites</h2>${renderList(sop.prerequisites,"No prerequisites listed.")}</section>
-    <section class="detail-section"><h2>3. Procedure</h2>${steps?`<ol class="procedure-list">${steps}</ol>`:'<p class="detail-muted">Procedure steps have not been added.</p>'}</section>
-    <section class="detail-section"><h2>4. Workarounds & Known Issues</h2>${workarounds||'<p class="detail-muted">No workarounds documented for this SOP.</p>'}</section>
-    <section class="detail-section"><h2>5. Process Flow</h2>${flow?`<ol class="flow-list">${flow}</ol>`:'<p class="detail-muted">No process flow provided.</p>'}</section>
-    <section class="detail-section"><h2>6. Version History</h2>${history?`<div class="table-wrap"><table><thead><tr><th>Version</th><th>Date</th><th>Change</th><th>Updated by</th></tr></thead><tbody>${history}</tbody></table></div>`:'<p class="detail-muted">Version history has not been added.</p>'}</section>`;
+    <section class="detail-section document-content-section"><h2>Full SOP Content</h2><div id="documentContent" class="document-content"><p class="detail-muted">Loading the original Word document…</p></div></section>
+`;
   libraryHero.hidden = true;
   libraryView.hidden = true;
   detailView.hidden = false;
+  loadSourceDocument(sop);
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
