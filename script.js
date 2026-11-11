@@ -9,7 +9,120 @@ const categories = [
   {id:"scripts",name:"Scripts & Integrations",tag:"SCRIPTS",icon:"⌘",description:"Documented procedures for scripts, APIs and integrations."}
 ];
 
-const sops = [];
+const sops = [
+  {
+    "id": "user-management-access-control",
+    "title": "User Management & Access Control Process",
+    "category": "database",
+    "summary": "MOP for managing user access and permissions.",
+    "file": "MOP _ User Management & Access Control Process.docx",
+    "keywords": "user management access control permissions"
+  },
+  {
+    "id": "warehouse-partner-modification",
+    "title": "Modifying Warehouse / Partner",
+    "category": "inventory",
+    "summary": "Procedure for modifying warehouse and partner details.",
+    "file": "SOP _  MODIFYING WAREHOUSE_PARTNER.docx",
+    "keywords": "warehouse partner modification"
+  },
+  {
+    "id": "sell-already-sold-product",
+    "title": "Customer Trying to Sell Already Sold Product",
+    "category": "troubleshooting",
+    "summary": "Troubleshooting procedure for attempts to sell an already-sold product.",
+    "file": "SOP _ Customer Trying to Sell Already Sold Product.docx",
+    "keywords": "customer sell already sold product"
+  },
+  {
+    "id": "hbb-datalake-sync-manual-trigger",
+    "title": "HBB Datalake Sync – Manual Trigger",
+    "category": "activation",
+    "summary": "Steps to manually trigger HBB Datalake synchronization.",
+    "file": "SOP _ HBB Datalake Sync – Manual Trigger.docx",
+    "keywords": "HBB Datalake sync manual trigger activation"
+  },
+  {
+    "id": "stock-serial-creation-guide",
+    "title": "Stock (Serial) Creation Guide",
+    "category": "inventory",
+    "summary": "Guide for creating stock serials.",
+    "file": "SOP _ Stock (Serial) Creation Guide_.docx",
+    "keywords": "stock serial creation"
+  },
+  {
+    "id": "new-price-segment",
+    "title": "How to Create a New Price Segment",
+    "category": "inventory",
+    "summary": "Procedure for creating a new price segment.",
+    "file": "SOP – How to Create a New Price Segment.docx",
+    "keywords": "price segment create"
+  },
+  {
+    "id": "buyer-type-not-displayed",
+    "title": "Buyer Type Not Displayed During Primary Sale Order Creation",
+    "category": "troubleshooting",
+    "summary": "Troubleshooting when buyer type is missing during primary sale order creation.",
+    "file": "SOP_ Buyer Type Not Displayed During Primary Sale Order Creation.docx",
+    "keywords": "buyer type primary sale order"
+  },
+  {
+    "id": "duplicate-wrong-stock-creation",
+    "title": "Handling Duplicate / Wrong Stock Creation",
+    "category": "troubleshooting",
+    "summary": "Procedure for handling duplicate or incorrectly created stock.",
+    "file": "SOP_ Handling Duplicate _ Wrong Stock Creation.docx",
+    "keywords": "duplicate wrong stock creation"
+  },
+  {
+    "id": "primary-sale-cancellation-rollback",
+    "title": "Primary Sale Cancellation – Rollback of Funds",
+    "category": "troubleshooting",
+    "summary": "Procedure for handling primary sale cancellation and fund rollback.",
+    "file": "SOP_ Primary Sale Cancellation – Rollback of Funds.docx",
+    "keywords": "primary sale cancellation rollback funds"
+  },
+  {
+    "id": "product-group-stock-limit",
+    "title": "Product Group Stock Limit Configuration",
+    "category": "inventory",
+    "summary": "Procedure for configuring stock limits at product-group level.",
+    "file": "SOP_ Product Group Stock Limit Configuration.docx",
+    "keywords": "product group stock limit configuration"
+  },
+  {
+    "id": "stock-creation-validation-range",
+    "title": "Stock Creation Failure – Validation Failed Exceeds the Range",
+    "category": "troubleshooting",
+    "summary": "Troubleshooting stock creation failures caused by range validation.",
+    "file": "SOP_ Stock Creation Failure – “Validation Failed Exceeds the Range”.docx",
+    "keywords": "stock creation validation failed exceeds range"
+  },
+  {
+    "id": "stock-limit-configuration",
+    "title": "Stock Limit Configuration",
+    "category": "inventory",
+    "summary": "Procedure for configuring stock limits.",
+    "file": "SOP_ Stock Limit Configuration.docx",
+    "keywords": "stock limit configuration"
+  },
+  {
+    "id": "invalid-serial-range-stock-transfer",
+    "title": "Invalid Serial Range / Serial Not in Range (Stock Transfer)",
+    "category": "troubleshooting",
+    "summary": "Troubleshooting invalid serial-range errors during stock transfer.",
+    "file": "SOP_ _INVALID SERIAL RANGE _ SERIAL NOT IN RANGE_ (Stock Transfer).docx",
+    "keywords": "invalid serial range stock transfer"
+  },
+  {
+    "id": "superset-query-extraction-insertion",
+    "title": "Superset Query Extraction & Insertion",
+    "category": "reporting",
+    "summary": "Procedure for extracting and inserting Superset queries.",
+    "file": "Superset query EXTRACTION & INSERTION.docx",
+    "keywords": "Superset query extraction insertion reporting"
+  }
+];
 // Example structure for future approved SOPs:
 // {
 //   id: "stock-limit-configuration",
