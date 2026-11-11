@@ -69,17 +69,22 @@ function renderCards(){
   );
 
   if(sops.length===0){
-    grid.innerHTML = categories
-      .filter(category=>activeCategory==="all" || category.id===activeCategory)
+    const visibleCategories = categories.filter(category =>
+      (activeCategory==="all" || category.id===activeCategory) &&
+      (!term || (category.name+" "+category.description+" "+category.tag).toLowerCase().includes(term))
+    );
+    grid.innerHTML = visibleCategories
       .map(category=>`<button class="sop-card category-card" type="button" data-category="${category.id}">
         <div class="card-top"><div class="card-icon" aria-hidden="true">${category.icon}</div><span class="card-tag">${category.tag}</span></div>
         <h3>${escapeHTML(category.name)}</h3>
         <p>${escapeHTML(category.description)}</p>
-        <div class="card-bottom"><span>0 published SOPs</span><span aria-hidden="true">→</span></div>
+        <div class="card-bottom"><span>Browse category</span><span aria-hidden="true">→</span></div>
       </button>`).join("");
-    count.textContent = "0 published SOPs";
-    empty.hidden = true;
-    grid.hidden = false;
+    count.textContent = visibleCategories.length + (term ? " matching categories" : " SOP categories");
+    empty.hidden = visibleCategories.length!==0;
+    grid.hidden = visibleCategories.length===0;
+    emptyTitle.textContent = term ? "No matching SOP categories" : "No SOPs published yet";
+    emptyMessage.textContent = term ? "Try another search term." : "SOPs will appear here once they are added to the library.";
     return;
   }
 
