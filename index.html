@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Centralized operations SOP and workaround knowledge base.">
+  <meta name="theme-color" content="#101828">
+  <title>Operations SOP Portal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Operations SOP Portal home">
+      <span class="brand-mark">O</span>
+      <span><strong>Operations</strong><small>SOP KNOWLEDGE BASE</small></span>
+    </a>
+    <a class="github-link" href="https://github.com/YeshwanthYolar/USDM2-OPS-SOP-PORTAL" target="_blank" rel="noreferrer">View repository ↗</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow"><span class="eyebrow-dot"></span> OPERATIONS KNOWLEDGE CENTER</div>
+      <h1>Find the right procedure.<br><span>Get work done confidently.</span></h1>
+      <p class="hero-copy">A single place for approved SOPs, operational workarounds, troubleshooting guides and process documentation.</p>
+      <label class="search-box">
+        <span aria-hidden="true">⌕</span>
+        <input id="searchInput" type="search" placeholder="Search SOPs, topics or keywords..." autocomplete="off">
+        <kbd>/</kbd>
+      </label>
+      <p class="search-hint">Search by SOP name, category or keyword</p>
+    </section>
+
+    <section class="content-section" aria-labelledby="library-title">
+      <div class="section-heading">
+        <div><div class="eyebrow muted">DOCUMENTATION</div><h2 id="library-title">SOP Library</h2></div>
+        <span class="result-count" id="resultCount">6 categories</span>
+      </div>
+      <nav class="filters" id="filters" aria-label="Filter SOP categories"></nav>
+      <div class="sop-grid" id="sopGrid"></div>
+      <div class="empty-state" id="emptyState" hidden>
+        <div class="empty-icon">⌕</div><h3>No matching SOPs</h3><p>Try another search term or select a different category.</p>
+      </div>
+    </section>
+
+    <section class="notice">
+      <div class="notice-icon">i</div>
+      <div><strong>Use the latest approved procedure</strong><p>Before carrying out an operational change, verify the SOP owner, version and approval status. Do not publish credentials, tokens, customer data or confidential production details here.</p></div>
+    </section>
+  </main>
+
+  <footer><span>Operations SOP Portal</span><span>Documentation • Standardization • Continuous improvement</span></footer>
+  <script src="script.js"></script>
+</body>
+</html>
