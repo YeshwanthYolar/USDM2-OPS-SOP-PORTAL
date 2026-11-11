@@ -22,7 +22,7 @@ function renderCards(){
   grid.innerHTML=shown.map(item=>`<article class="sop-card">
     <div class="card-top"><div class="card-icon" aria-hidden="true">${item.icon}</div><span class="card-tag">${item.tag}</span></div>
     <h3>${item.name}</h3><p>${item.description}</p>
-    <div class="card-bottom"><span>Browse category</span><span aria-hidden="true">→</span></div>
+    <div class="card-bottom"><span>SOPs coming soon</span><span aria-hidden="true">→</span></div>
   </article>`).join("");
   count.textContent=term?shown.length+" results":shown.length+" categories";
   empty.hidden=shown.length!==0;
