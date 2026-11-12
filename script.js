@@ -244,17 +244,43 @@ function addCopyControl(pre){
 }
 
 function enhanceDocumentCode(root){
-  const codePattern=/(^[ \t]*(SELECT|WITH|INSERT|UPDATE|DELETE|MERGE|CREATE|ALTER|DROP|GRANT|REVOKE|BEGIN|DECLARE|#!|curl[ \t]|sqlldr[ \t]|kubectl[ \t]|docker[ \t]|terraform[ \t]|helm[ \t]|grep[ \t]|awk[ \t]|sed[ \t]|chmod[ \t]|chown[ \t]|export[ \t]|sudo[ \t]|systemctl[ \t]|crontab[ \t]|python3?[ \t]|bash[ \t]|sh[ \t]|\$ |# )|\b(FROM|WHERE|JOIN|GROUP BY|ORDER BY|VALUES|INTO TABLE|FIELDS TERMINATED|TRAILING NULLCOLS)\b|\$\([^)]+\)|[A-Z_][A-Z0-9_]*[ \t]*=)/i;
-  root.querySelectorAll("p").forEach(p=>{
-    const text=(p.innerText||p.textContent||"").trim();
-    if(!text||text.length<5||!codePattern.test(text))return;
+  const paragraphs=[...root.querySelectorAll("p")];
+  const startPattern=/^(?:#!|(?:SELECT|WITH|INSERT|UPDATE|DELETE|MERGE|CREATE|ALTER|DROP|GRANT|REVOKE|BEGIN|DECLARE)\b|(?:curl|sqlldr|kubectl|docker|terraform|helm|grep|awk|sed|chmod|chown|export|sudo|systemctl|crontab|python3?|bash|sh|cat|jq|mysql|sqlplus)\s|[A-Z_][A-Z0-9_]*\s*=|(?:while|for|if|case)\b.*(?:do|then|in)|(?:echo|printf|break|continue|return|exit|fi|done|else|then)\b)/i;
+  const continuationPattern=/^(?:-[A-Za-z]|--[A-Za-z]|[A-Z_][A-Z0-9_]*\s*=|["']|\\|&&|\|\||\||\)|\}|(?:while|for|if|case|do|then|else|fi|done|break|continue|exit)\b|(?:echo|printf|read|sleep|curl|python3?|sqlldr|jq|grep|awk|sed|mv|cp|rm|mkdir|touch|cat|head|tail|wc|date|export|source|\.\/|\/|#))/i;
+  const codeWordPattern=/\b(?:FROM|WHERE|JOIN|GROUP BY|ORDER BY|VALUES|INTO TABLE|FIELDS TERMINATED|TRAILING NULLCOLS)\b/i;
+  const getText=p=>(p.innerText||p.textContent||"").replace(/\u00a0/g," ").trim();
+  for(let i=0;i<paragraphs.length;i++){
+    const first=paragraphs[i];
+    if(!first.isConnected)continue;
+    const firstText=getText(first);
+    if(!firstText||firstText.length<3)continue;
+    const startsCode=startPattern.test(firstText)||codeWordPattern.test(firstText);
+    if(!startsCode)continue;
+    const lines=[firstText];
+    let last=firstText;
+    let j=i+1;
+    while(j<paragraphs.length){
+      const next=paragraphs[j];
+      if(!next.isConnected){j++;continue;}
+      const value=getText(next);
+      if(!value){j++;continue;}
+      const continued=last.endsWith("\\")||continuationPattern.test(value)||codeWordPattern.test(value);
+      if(!continued)break;
+      lines.push(value);
+      last=value;
+      j++;
+    }
     const pre=document.createElement("pre");
     pre.className="document-code-block";
     const code=document.createElement("code");
-    code.textContent=text;
+    code.textContent=lines.join("\n");
     pre.appendChild(code);
-    p.replaceWith(pre);
-  });
+    first.replaceWith(pre);
+    for(let k=i+1;k<j;k++){
+      if(paragraphs[k].isConnected)paragraphs[k].remove();
+    }
+    i=j-1;
+  }
   root.querySelectorAll("pre").forEach(addCopyControl);
 }
 
