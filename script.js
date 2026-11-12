@@ -245,30 +245,40 @@ function addCopyControl(pre){
 
 function enhanceDocumentCode(root){
   const paragraphs=[...root.querySelectorAll("p")];
-  const startPattern=/^(?:#!|(?:SELECT|WITH|INSERT|UPDATE|DELETE|MERGE|CREATE|ALTER|DROP|GRANT|REVOKE|BEGIN|DECLARE)\b|(?:curl|sqlldr|kubectl|docker|terraform|helm|grep|awk|sed|chmod|chown|export|sudo|systemctl|crontab|python3?|bash|sh|cat|jq|mysql|sqlplus)\s|[A-Z_][A-Z0-9_]*\s*=|(?:while|for|if|case)\b.*(?:do|then|in)|(?:echo|printf|break|continue|return|exit|fi|done|else|then)\b)/i;
-  const continuationPattern=/^(?:-[A-Za-z]|--[A-Za-z]|[A-Z_][A-Z0-9_]*\s*=|["']|\\|&&|\|\||\||\)|\}|(?:while|for|if|case|do|then|else|fi|done|break|continue|exit)\b|(?:echo|printf|read|sleep|curl|python3?|sqlldr|jq|grep|awk|sed|mv|cp|rm|mkdir|touch|cat|head|tail|wc|date|export|source|\.\/|\/|#))/i;
-  const codeWordPattern=/\b(?:FROM|WHERE|JOIN|GROUP BY|ORDER BY|VALUES|INTO TABLE|FIELDS TERMINATED|TRAILING NULLCOLS)\b/i;
-  const getText=p=>(p.innerText||p.textContent||"").replace(/\u00a0/g," ").trim();
+  const commandStart=/^(?:#!|(?:SELECT|WITH|INSERT|UPDATE|DELETE|MERGE|CREATE|ALTER|DROP|GRANT|REVOKE|BEGIN|DECLARE)\b|(?:curl|sqlldr|kubectl|docker|terraform|helm|grep|awk|sed|chmod|chown|export|sudo|systemctl|crontab|python3?|bash|sh|cat|jq|mysql|sqlplus)\s|[A-Z_][A-Z0-9_]*\s*=|(?:while|for|if|case)\b|(?:echo|printf|break|continue|return|exit|fi|done|else|then)\b)/i;
+  const shellLine=/^(?:-[A-Za-z]\b|--[A-Za-z][\w-]*|[A-Z_][A-Z0-9_]*\s*=|["']|\\|&&|\|\||\||\)|\}|(?:while|for|if|case|do|then|else|fi|done|break|continue|exit)\b|(?:echo|printf|read|sleep|curl|python3?|sqlldr|jq|grep|awk|sed|mv|cp|rm|mkdir|touch|cat|head|tail|wc|date|export|source|\.\/|\/|#))/i;
+  const sqlLine=/^(?:SELECT|WITH|INSERT|UPDATE|DELETE|MERGE|CREATE|ALTER|DROP|GRANT|REVOKE|FROM\b|WHERE\b|JOIN\b|GROUP BY\b|ORDER BY\b|VALUES\b|INTO\b|SET\b|AND\b|OR\b|ON\b|;\s*$)/i;
+  const optionLine=/^(?:-[A-Za-z]\b|--[A-Za-z][\w-]*|["'][^"']+["']\s*\\?$)/;
+  const textOf=p=>(p.innerText||p.textContent||"").replace(/\u00a0/g," ").trim();
+  const isCodeContinuation=(value,mode,previous)=>{
+    if(!value)return true;
+    if(previous.endsWith("\\"))return true;
+    if(shellLine.test(value)||sqlLine.test(value)||optionLine.test(value))return true;
+    if(mode==="shell" && (/^[\w./$"'{}()[\]-]+\s*(?:\\|&&|\|\||\||;)?$/.test(value)||/^(?:https?:\/\/|\$[A-Z_]+|[A-Z_][A-Z0-9_]*=)/i.test(value)))return true;
+    return false;
+  };
   for(let i=0;i<paragraphs.length;i++){
     const first=paragraphs[i];
     if(!first.isConnected)continue;
-    const firstText=getText(first);
-    if(!firstText||firstText.length<3)continue;
-    const startsCode=startPattern.test(firstText)||codeWordPattern.test(firstText);
-    if(!startsCode)continue;
+    const firstText=textOf(first);
+    if(!firstText||firstText.length<3||!commandStart.test(firstText))continue;
+    const mode=/^(?:SELECT|WITH|INSERT|UPDATE|DELETE|MERGE|CREATE|ALTER|DROP|GRANT|REVOKE)\b/i.test(firstText)?"sql":"shell";
     const lines=[firstText];
-    let last=firstText;
+    let previous=firstText;
     let j=i+1;
+    let sawTerminator=/^(?:fi|done|exit)\b/i.test(firstText);
     while(j<paragraphs.length){
       const next=paragraphs[j];
       if(!next.isConnected){j++;continue;}
-      const value=getText(next);
+      const value=textOf(next);
       if(!value){j++;continue;}
-      const continued=last.endsWith("\\")||continuationPattern.test(value)||codeWordPattern.test(value);
-      if(!continued)break;
+      const continuation=isCodeContinuation(value,mode,previous);
+      if(!continuation)break;
       lines.push(value);
-      last=value;
+      previous=value;
+      if(/^(?:fi|done)\s*;?$/.test(value))sawTerminator=true;
       j++;
+      if(sawTerminator && !previous.endsWith("\\"))break;
     }
     const pre=document.createElement("pre");
     pre.className="document-code-block";
@@ -276,9 +286,7 @@ function enhanceDocumentCode(root){
     code.textContent=lines.join("\n");
     pre.appendChild(code);
     first.replaceWith(pre);
-    for(let k=i+1;k<j;k++){
-      if(paragraphs[k].isConnected)paragraphs[k].remove();
-    }
+    for(let k=i+1;k<j;k++)if(paragraphs[k].isConnected)paragraphs[k].remove();
     i=j-1;
   }
   root.querySelectorAll("pre").forEach(addCopyControl);
