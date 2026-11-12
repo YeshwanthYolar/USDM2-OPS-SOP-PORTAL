@@ -55,3 +55,10 @@ td{color:#596579}
 .document-content img{max-width:100%;height:auto;display:block;margin:14px auto;border-radius:7px}
 .document-content pre{white-space:pre-wrap;overflow-x:auto;background:#101828;color:#e6edf7;padding:15px;border-radius:8px;font-size:12px;line-height:1.65}
 .document-content blockquote{border-left:3px solid #cbd5ff;padding:5px 15px;margin:14px 0;color:#667085}
+
+
+/* Copyable SQL, shell commands and code extracted from Word SOPs */
+.document-content pre.document-code-block{position:relative;padding:42px 16px 16px;background:#101828;color:#e6edf7;border:1px solid #263348;border-radius:10px;margin:14px 0;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace}
+.document-content pre.document-code-block code{font:inherit;white-space:pre-wrap}
+.doc-copy-button{position:absolute;top:8px;right:8px;border:1px solid #526078;background:#263348;color:#fff;border-radius:6px;padding:6px 10px;font:600 10px/1.2 Inter,system-ui,sans-serif;cursor:pointer}
+.doc-copy-button:hover{background:#34445e}
