@@ -244,7 +244,7 @@ function addCopyControl(pre){
 }
 
 function enhanceDocumentCode(root){
-  const codePattern=/(^\\s*(SELECT|WITH|INSERT|UPDATE|DELETE|MERGE|CREATE|ALTER|DROP|GRANT|REVOKE|BEGIN|DECLARE|#!/|curl\\s|sqlldr\\s|kubectl\\s|docker\\s|terraform\\s|helm\\s|grep\\s|awk\\s|sed\\s|chmod\\s|chown\\s|export\\s|sudo\\s|systemctl\\s|crontab\\s|python3?\\s|bash\\s|sh\\s|\$ |# )|\\b(FROM|WHERE|JOIN|GROUP BY|ORDER BY|VALUES|INTO TABLE|FIELDS TERMINATED|TRAILING NULLCOLS)\\b|\\$\\([^)]+\\)|[A-Z_][A-Z0-9_]*\\s*=)/i;
+  const codePattern=/(^[ \t]*(SELECT|WITH|INSERT|UPDATE|DELETE|MERGE|CREATE|ALTER|DROP|GRANT|REVOKE|BEGIN|DECLARE|#!|curl[ \t]|sqlldr[ \t]|kubectl[ \t]|docker[ \t]|terraform[ \t]|helm[ \t]|grep[ \t]|awk[ \t]|sed[ \t]|chmod[ \t]|chown[ \t]|export[ \t]|sudo[ \t]|systemctl[ \t]|crontab[ \t]|python3?[ \t]|bash[ \t]|sh[ \t]|\$ |# )|\b(FROM|WHERE|JOIN|GROUP BY|ORDER BY|VALUES|INTO TABLE|FIELDS TERMINATED|TRAILING NULLCOLS)\b|\$\([^)]+\)|[A-Z_][A-Z0-9_]*[ \t]*=)/i;
   root.querySelectorAll("p").forEach(p=>{
     const text=(p.innerText||p.textContent||"").trim();
     if(!text||text.length<5||!codePattern.test(text))return;
