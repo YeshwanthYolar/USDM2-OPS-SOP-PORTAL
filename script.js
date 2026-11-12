@@ -222,6 +222,42 @@ function renderList(items, emptyText){
   return `<ul class="detail-list">${items.map(item=>`<li>${escapeHTML(item)}</li>`).join("")}</ul>`;
 }
 
+function addCopyControl(pre){
+  if(pre.querySelector(".doc-copy-button"))return;
+  const code=pre.querySelector("code")||pre;
+  const button=document.createElement("button");
+  button.type="button";
+  button.className="doc-copy-button";
+  button.textContent="Copy";
+  button.setAttribute("data-copy-code","");
+  button.addEventListener("click",async()=>{
+    const original=button.textContent;
+    try{
+      await navigator.clipboard.writeText(code.innerText||code.textContent||"");
+      button.textContent="Copied";
+    }catch(error){
+      button.textContent="Select code to copy";
+    }
+    window.setTimeout(()=>button.textContent=original,1500);
+  });
+  pre.appendChild(button);
+}
+
+function enhanceDocumentCode(root){
+  const codePattern=/(^\\s*(SELECT|WITH|INSERT|UPDATE|DELETE|MERGE|CREATE|ALTER|DROP|GRANT|REVOKE|BEGIN|DECLARE|#!/|curl\\s|sqlldr\\s|kubectl\\s|docker\\s|terraform\\s|helm\\s|grep\\s|awk\\s|sed\\s|chmod\\s|chown\\s|export\\s|sudo\\s|systemctl\\s|crontab\\s|python3?\\s|bash\\s|sh\\s|\$ |# )|\\b(FROM|WHERE|JOIN|GROUP BY|ORDER BY|VALUES|INTO TABLE|FIELDS TERMINATED|TRAILING NULLCOLS)\\b|\\$\\([^)]+\\)|[A-Z_][A-Z0-9_]*\\s*=)/i;
+  root.querySelectorAll("p").forEach(p=>{
+    const text=(p.innerText||p.textContent||"").trim();
+    if(!text||text.length<5||!codePattern.test(text))return;
+    const pre=document.createElement("pre");
+    pre.className="document-code-block";
+    const code=document.createElement("code");
+    code.textContent=text;
+    pre.appendChild(code);
+    p.replaceWith(pre);
+  });
+  root.querySelectorAll("pre").forEach(addCopyControl);
+}
+
 async function loadSourceDocument(sop){
   const target=document.getElementById("documentContent");
   if(!target)return;
@@ -232,7 +268,8 @@ async function loadSourceDocument(sop){
     const buffer=await response.arrayBuffer();
     const result=await mammoth.convertToHtml({arrayBuffer:buffer});
     target.innerHTML=result.value||"No extractable text found in this document.";
-  }catch(error){target.textContent="Could not display this document. Use the original Word document link above."}
+    enhanceDocumentCode(target);
+  }catch(error){target.textContent="Could not display this document. Use the original document link above."}
 }
 
 function renderDetail(sop){
